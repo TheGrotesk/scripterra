@@ -1,2 +1,2 @@
-# scripterra
-Script engine for your server
+# Scripterra
+### Script engine for your Node.js server
