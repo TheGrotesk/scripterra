@@ -1,5 +1,5 @@
 {
-  "name": "@alex_poberezhnyi/scripterra",
+  "name": "@thegrotesk/scripterra",
   "version": "0.0.1",
   "description": "Script engine for your server",
   "type": "module",
