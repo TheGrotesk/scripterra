@@ -3,45 +3,75 @@
 import commandLineArgs from 'command-line-args';
 import fs              from 'fs';
 import path            from 'path';
+import pkg             from './../package.json';
 
 const dir = path.resolve(path.dirname(''), './');
 
 const traitsDir = `${dir}/traits`;
 const execDir = `${dir}/executable`;
 
-const createScript = (name) => {
+(async () => {
+    console.table(['Scripterra', pkg.version]);
+    const CREATION_TYPES = ['script', 'trait'];
+
+    const defenitions = [
+        {name: 'create', alias: 'c', type: String},
+        {name: 'name',   alias: 'n', type: String},
+        {name: 'run', alias: 'r', type: String},
+        {name: 'env', alias: 'e', type: String}
+    ];
+
+    const args = commandLineArgs(defenitions);
+
+    if (args['create'] && CREATION_TYPES.includes(args['create'][0])) {
+        if (!args['name']) {
+            console.log('--name is not provided');
+            process.exit(0);
+        }
+
+        switch (args['create'][0]) {
+            case CREATION_TYPES[0]: {
+                createScript(args['name'] );
+                break;
+            }
+            case CREATION_TYPES[1]: {
+                createTrait(args['name']);
+                break;
+            }
+        }
+    } else if (args['run']) {
+        if (!args['env']) {
+            console.log('--env is not provided');
+            process.exit(0);
+        }
+
+        const script = await import(`./executable/${args['run']}.js`);
+
+        if (!script) {
+            console.error(`Script with name ${args['run']} not found! Please try another script or create new one.`);
+        }
+
+        const Script = new script[args['run']](args);
+
+        await Script.initTraits();
+
+        await Script.run();
+    } else {
+        console.error('Invalid arguments!');
+    }
+
+    process.exit(0);
+})();
+
+function createScript(name) {
     createFile(`${execDir}/${name}.js`, `${dir}/cli/template.txt`, name);
 }
 
-const createTrait = (name) => {
+function createTrait(name) {
     createFile(`${traitsDir}/${name}.js`, `${dir}/cli/trait_template.txt`, name);
 }
 
-const attachTrait = (traits, envs) => {
-    for (const trait in traits) {
-        for (const env in envs) {
-            console.log('Attaching trait ', traits[trait], ' to script ', envs[env]);
-
-            const envExists = fs.existsSync(`${dir}/env/${envs[env]}`);
-
-            if (!envExists) {
-                console.error('No such environment like ', envs[env]);
-                process.exit(0);
-            }
-
-            const traitExists = fs.existsSync(`${traitsDir}/${traits[trait]}`);
-
-            if (!traitExists) {
-                console.error('No such trait like ', traits[trait]);
-                process.exit(0);
-            }
-
-            //TODO: write logic here!!
-        }
-    }
-};
-
-const createFile = (path, templatePath, name) => { 
+function createFile(path, templatePath, name) {
     const template = fs.readFileSync(templatePath).toString();
 
     const resultTemp = template.replace("${name}", name);
@@ -61,29 +91,4 @@ const createFile = (path, templatePath, name) => {
             process.exit(0);
         }
     }
-} 
-
-(async () => {
-    const defenitions = [
-        {name: 'create', alias: 'c', type: Boolean},
-        {name: 'script', alias: 's', type: Boolean},
-        {name: 'trait',    alias: 't', type: Boolean},
-        {name: 'name',   alias: 'n', type: String},
-        {name: 'attach_trait', alias: 'a', type: String, multiple: true},
-        {name: 'environment', alias: 'e', type: String, multiple: true}
-    ];
-
-    const args = commandLineArgs(defenitions);
-
-    if (args['create'] && args['script'] && args['name']) {
-        createScript(args['name']);
-    } else if (args['create'] && args['trait'] && args['name']){
-        createTrait(args['name']);
-    } else if (args['attach_trait'] && args['environment']) {
-        attachTrait(args['attach_trait'], args['environment']);
-    } else {
-        console.error('Invalid arguments!');
-    }
-
-    process.exit(0);
-})();
+}
