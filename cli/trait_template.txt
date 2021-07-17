@@ -1,0 +1,7 @@
+export class ${name} {
+    async init() {
+        this.testvar = "Hello"; // <--- Now this var will be accessible from script if you enable this module for instance
+    }
+
+    // Here you can create your own methods
+}
