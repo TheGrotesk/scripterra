@@ -1,4 +1,4 @@
-<h1 align="center"> About Scripterra Project </h1> 
+<h1 align="center">About Scripterra Project</h1> 
 
 
 ```sh

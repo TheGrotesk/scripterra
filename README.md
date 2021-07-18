@@ -43,7 +43,7 @@ scripterra --help
 
 ## Documantation
 
-* 
+* [About](/public/docs/About.md)
 
 ## Run tests
 
