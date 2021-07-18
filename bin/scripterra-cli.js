@@ -69,7 +69,7 @@ let config;
 })();
 
 function createScript(name) {
-    createFile(config.SCRIPTS_PATH ?? execDir, `./cli/template.txt`, name);
+    createFile(config.SCRIPTS_PATH ?? execDir, `${__dirname}/cli/template.txt`, name);
 }
 
 function createTrait(name) {
