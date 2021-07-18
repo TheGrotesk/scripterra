@@ -20,10 +20,11 @@ let config;
     const CREATION_TYPES = ['script', 'trait', 'config'];
 
     const defenitions = [
-        {name: 'create', alias: 'c', type: String},
-        {name: 'name',   alias: 'n', type: String},
+        {name: 'create', alias: 'c', type: String, description: 'Starts the process of creating a script or trait. Possible values (script | trait | config)'},
+        {name: 'name',   alias: 'n', type: String, description: 'Specifies the name of the script or trait when using the --create flag'},
         {name: 'run', alias: 'r', type: String},
-        {name: 'env', alias: 'e', type: String}
+        {name: 'env', alias: 'e', type: String},
+        {name: 'help', type: Boolean}
     ];
 
     const args = commandLineArgs(defenitions);
@@ -65,12 +66,33 @@ let config;
         await Script.initTraits();
 
         await Script.run();
+    } else if(args['help']) {
+        consoleHelp(defenitions);
     } else {
         consoleError('No valid arguments provided!');
     }
 
     process.exit(0);
 })();
+
+function consoleHelp(defenitions) {
+    console.log('Help |'.magenta, 'Table of all Scripterra flags:'.blue);
+    consoleTable(
+        (() => {
+            const commands = [];
+
+            for (const command of defenitions) {
+                commands.push({
+                    flag: command.name,
+                    alias: command.alias,
+                    description: command.description
+                });
+            }
+
+            return commands;
+        })()
+    );
+}
 
 function createScript(name) {
     createFile(config.SCRIPTS_PATH ?? execDir, `${__dirname}/../cli/template.txt`, name, '.js');
