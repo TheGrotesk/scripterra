@@ -1,17 +1,22 @@
 #! /usr/bin/env node
 
 import commandLineArgs from 'command-line-args';
+import colors          from "colors";
+import dotenv          from 'dotenv';
 import fs              from 'fs';
 import path            from 'path';
-import pkg             from './../package.json';
 
 const dir = path.resolve(path.dirname(''), './');
 
 const traitsDir = `${dir}/traits`;
 const execDir = `${dir}/executable`;
 
+let config;
+
 (async () => {
-    console.table(['Scripterra', pkg.version]);
+    consoleLogo();
+    loadConfig();
+
     const CREATION_TYPES = ['script', 'trait'];
 
     const defenitions = [
@@ -23,13 +28,13 @@ const execDir = `${dir}/executable`;
 
     const args = commandLineArgs(defenitions);
 
-    if (args['create'] && CREATION_TYPES.includes(args['create'][0])) {
+    if (args['create'] && CREATION_TYPES.includes(args['create'])) {
         if (!args['name']) {
-            console.log('--name is not provided');
+            consoleError('--name is not provided');
             process.exit(0);
         }
 
-        switch (args['create'][0]) {
+        switch (args['create']) {
             case CREATION_TYPES[0]: {
                 createScript(args['name'] );
                 break;
@@ -41,14 +46,14 @@ const execDir = `${dir}/executable`;
         }
     } else if (args['run']) {
         if (!args['env']) {
-            console.log('--env is not provided');
+            consoleError('--env is not provided');
             process.exit(0);
         }
 
         const script = await import(`./executable/${args['run']}.js`);
 
         if (!script) {
-            console.error(`Script with name ${args['run']} not found! Please try another script or create new one.`);
+            consoleError(`Script with name ${args['run']} not found! Please try another script or create new one.`);
         }
 
         const Script = new script[args['run']](args);
@@ -57,21 +62,24 @@ const execDir = `${dir}/executable`;
 
         await Script.run();
     } else {
-        console.error('Invalid arguments!');
+        consoleError('No valid arguments provided!');
     }
 
     process.exit(0);
 })();
 
 function createScript(name) {
-    createFile(`${execDir}/${name}.js`, `${dir}/cli/template.txt`, name);
+    createFile(config.SCRIPTS_PATH ?? execDir, `${dir}/cli/template.txt`, name);
 }
 
 function createTrait(name) {
-    createFile(`${traitsDir}/${name}.js`, `${dir}/cli/trait_template.txt`, name);
+    createFile(config.TRAITS_PATH ?? traitsDir, `${dir}/cli/trait_template.txt`, name);
 }
 
 function createFile(path, templatePath, name) {
+    path += `/${name}.js`;
+    consoleInfo(`Path for future file: ${path}`);
+
     const template = fs.readFileSync(templatePath).toString();
 
     const resultTemp = template.replace("${name}", name);
@@ -79,16 +87,50 @@ function createFile(path, templatePath, name) {
     const exists = fs.existsSync(path);
 
     if (exists) {
-        console.error('File already exists!');
+        consoleError('File already exists!');
         process.exit(0);
     } else {
         try {
             fs.writeFileSync(path, resultTemp);
 
-            console.log('File was created. Enjoy!');
+            consoleInfo('File was created. Enjoy!');
         } catch(err) {
-            console.log(err);
+            consoleError(err);
             process.exit(0);
         }
+    }
+}
+
+function consoleLogo () {
+    const asciiLogo = fs.readFileSync(`${dir}/cli/logo_ascii`);
+
+    console.log(`${asciiLogo.toString()}`.rainbow);
+    console.log(`Welcome to Scripterra! Pass --help for more information.\n`.cyan);
+}
+
+function consoleError(message) {
+    console.log('Error | '.red, `${message}`.yellow);
+}
+
+function consoleInfo(message) {
+    console.log('Info | '.green, `${message}`.blue);
+}
+
+function consoleTable(obj) {
+    console.table(obj);
+}
+
+function loadConfig() {
+    const result = dotenv.config({
+        path: './.scripterra'
+    });
+
+    if (result.error) {
+        consoleInfo(`Can't load Scripterra config file! Please create .scripterra file or check it for existing.`);
+    } else {
+        consoleInfo('Current .scripterra config:');
+        consoleTable(result.parsed);
+
+        config = result.parsed;
     }
 }
