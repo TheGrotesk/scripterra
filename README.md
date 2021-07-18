@@ -1,4 +1,5 @@
 <h1 align="center">Welcome to Scripterra 👋</h1>
+
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.2-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/TheGrotesk/scripterra#readme" target="_blank">
@@ -12,7 +13,19 @@
   </a>
 </p>
 
-> Script engine for your server
+```sh
+------------------------------------------------------------------
+  _________            .__        __
+ /   _____/ ___________|__|______/  |_  _______________________
+ \_____  \_/ ___\_  __ \  \____ \   __\/ __ \_  __ \_  __ \__  \
+ /        \  \___|  | \/  |  |_> >  | \  ___/|  | \/|  | \// __ \_
+/_______  /\___  >__|  |__|   __/|__|  \___  >__|   |__|  (____  /
+        \/     \/         |__|             \/                  \/
+-------------------------------------------------------------------
+```
+
+> Powerful script engine for Node.js
+
 
 ### 🏠 [Homepage](https://github.com/TheGrotesk/scripterra#readme)
 
@@ -27,6 +40,10 @@ npm i -g @thegrotesk/scripterra
 ```sh
 scripterra --help
 ```
+
+## Documantation
+
+* 
 
 ## Run tests
 
