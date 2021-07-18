@@ -69,11 +69,11 @@ let config;
 })();
 
 function createScript(name) {
-    createFile(config.SCRIPTS_PATH ?? execDir, `${path.resolve('.')}/cli/template.txt`, name);
+    createFile(config.SCRIPTS_PATH ?? execDir, `/cli/template.txt`, name);
 }
 
 function createTrait(name) {
-    createFile(config.TRAITS_PATH ?? traitsDir, `${path.resolve('.')}/cli/trait_template.txt`, name);
+    createFile(config.TRAITS_PATH ?? traitsDir, `/cli/trait_template.txt`, name);
 }
 
 function createFile(path, templatePath, name) {
@@ -102,7 +102,7 @@ function createFile(path, templatePath, name) {
 }
 
 function consoleLogo () {
-    const asciiLogo = fs.readFileSync(`${path.resolve('.')}/cli/logo_ascii`);
+    const asciiLogo = fs.readFileSync(`/cli/logo_ascii`);
 
     console.log(`${asciiLogo.toString()}`.rainbow);
     console.log(`Welcome to Scripterra! Pass --help for more information.\n`.cyan);
