@@ -1,10 +1,10 @@
 #! /usr/bin/env node
 
-import commandLineArgs from 'command-line-args';
-import colors          from "colors";
-import dotenv          from 'dotenv';
-import fs              from 'fs';
-import path            from 'path';
+const commandLineArgs = require('command-line-args');
+const colors = require("colors");
+const dotenv = require('dotenv');
+const fs = require('fs');
+const path = require('path');
 
 const dir = path.resolve(path.dirname(''), './');
 
@@ -17,7 +17,7 @@ let config;
     consoleLogo();
     loadConfig();
 
-    const CREATION_TYPES = ['script', 'trait'];
+    const CREATION_TYPES = ['script', 'trait', 'config'];
 
     const defenitions = [
         {name: 'create', alias: 'c', type: String},
@@ -29,7 +29,7 @@ let config;
     const args = commandLineArgs(defenitions);
 
     if (args['create'] && CREATION_TYPES.includes(args['create'])) {
-        if (!args['name']) {
+        if (!args['name'] && args['create'] !== CREATION_TYPES[2]) {
             consoleError('--name is not provided');
             process.exit(0);
         }
@@ -41,6 +41,10 @@ let config;
             }
             case CREATION_TYPES[1]: {
                 createTrait(args['name']);
+                break;
+            }
+            case CREATION_TYPES[2]: {
+                createConfig();
                 break;
             }
         }
@@ -69,15 +73,26 @@ let config;
 })();
 
 function createScript(name) {
-    createFile(config.SCRIPTS_PATH ?? execDir, `/cli/template.txt`, name);
+    createFile(config.SCRIPTS_PATH ?? execDir, `${__dirname}/../cli/template.txt`, name, '.js');
 }
 
 function createTrait(name) {
-    createFile(config.TRAITS_PATH ?? traitsDir, `/cli/trait_template.txt`, name);
+    createFile(config.TRAITS_PATH ?? traitsDir, `${__dirname}/../cli/trait_template.txt`, name, '.js');
 }
 
-function createFile(path, templatePath, name) {
-    path += `/${name}.js`;
+function createConfig() {
+    createFile('.', `${__dirname}/../cli/config_template.txt`, '.scripterra');
+}
+
+function createFile(path, templatePath, name, ext = '') {
+    const isDirExists = checkDir(path);
+
+    if (!isDirExists) {
+        consoleInfo(`Creating directory: ${path}`);
+        fs.mkdirSync(path);
+    }
+
+    path += `/${name}${ext ?? '.js'}`;
     consoleInfo(`Path for future file: ${path}`);
 
     const template = fs.readFileSync(templatePath).toString();
@@ -101,8 +116,12 @@ function createFile(path, templatePath, name) {
     }
 }
 
+function checkDir(path) {
+    return !!fs.existsSync(path);
+}
+
 function consoleLogo () {
-    const asciiLogo = fs.readFileSync(`/cli/logo_ascii`);
+    const asciiLogo = fs.readFileSync(`${__dirname}/../cli/logo_ascii`);
 
     console.log(`${asciiLogo.toString()}`.rainbow);
     console.log(`Welcome to Scripterra! Pass --help for more information.\n`.cyan);

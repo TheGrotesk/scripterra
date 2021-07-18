@@ -1,0 +1,3 @@
+SCRIPTS_PATH = ./scripts
+TRAITS_PATH = ./traits
+ENV_PATH = ./scripts-env
