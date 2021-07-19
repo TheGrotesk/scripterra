@@ -1,14 +1,13 @@
 {
   "name": "@thegrotesk/scripterra",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Script engine for your server",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "scripterra": "./bin/scripterra-cli.js"
+    "scripterra": "bin/scripterra-cli.js"
   },
   "keywords": [
     "scripts",
@@ -20,9 +19,22 @@
     "scheduler"
   ],
   "author": "Alexander Poberezhnyi",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
+    "colors": "^1.4.0",
     "command-line-args": "^5.1.3",
     "dotenv": "^10.0.0"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheGrotesk/scripterra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TheGrotesk/scripterra/issues"
+  },
+  "homepage": "https://github.com/TheGrotesk/scripterra#readme"
 }
