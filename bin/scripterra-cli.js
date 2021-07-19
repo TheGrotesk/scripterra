@@ -5,11 +5,23 @@ const colors = require("colors");
 const dotenv = require('dotenv');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require("child_process");
+const babel = require('@babel/core');
 
 const dir = path.resolve(path.dirname(''), './');
 
 const traitsDir = `${dir}/traits`;
 const execDir = `${dir}/executable`;
+
+const CREATION_TYPES = ['script', 'trait', 'config'];
+const defenitions = [
+    {name: 'create', alias: 'c', type: String, description: 'Starts the process of creating a script or trait. Possible values (script | trait | config)'},
+    {name: 'name',   alias: 'n', type: String, description: 'Specifies the name of the script or trait when using the --create flag'},
+    {name: 'run', alias: 'r', type: String},
+    {name: 'env', alias: 'e', type: String},
+    {name: 'list', alias: 'l', type: Boolean, description: 'Get list of all created scripts'},
+    {name: 'help', type: Boolean}
+];
 
 let config;
 
@@ -17,17 +29,15 @@ let config;
     consoleLogo();
     loadConfig();
 
-    const CREATION_TYPES = ['script', 'trait', 'config'];
-
-    const defenitions = [
-        {name: 'create', alias: 'c', type: String, description: 'Starts the process of creating a script or trait. Possible values (script | trait | config)'},
-        {name: 'name',   alias: 'n', type: String, description: 'Specifies the name of the script or trait when using the --create flag'},
-        {name: 'run', alias: 'r', type: String},
-        {name: 'env', alias: 'e', type: String},
-        {name: 'help', type: Boolean}
-    ];
-
     const args = commandLineArgs(defenitions);
+
+    await runCommand(args);
+
+    process.exit(0);
+})();
+
+async function runCommand (args) {
+    const scriptDir = config.SCRIPTS_PATH ?? execDir;
 
     if (args['create'] && CREATION_TYPES.includes(args['create'])) {
         if (!args['name'] && args['create'] !== CREATION_TYPES[2]) {
@@ -55,44 +65,39 @@ let config;
             process.exit(0);
         }
 
-        const script = await import(`./${config.SCRIPTS_PATH ?? 'executable'}/${args['run']}.js`);
+        const scriptPath = `${scriptDir}/${args['run']}`;
+
+        const es5BuildResult = await buildScript(scriptPath, args['run']);
+
+        try {
+            fs.writeFileSync(`${scriptDir}/${args['run']}.build.js`, es5BuildResult.code);
+        } catch (err) {
+            consoleError(err.message);
+        }
+
+        const script = (require(`${path.resolve()}/${scriptDir}/${args['run']}.build.js`)).default;
 
         if (!script) {
             consoleError(`Script with name ${args['run']} not found! Please try another script or create new one.`);
         }
 
-        const Script = new script[args['run']](args);
+        console.log(script);
+
+        const Script = new script(config, args);
 
         await Script.initTraits();
 
         await Script.run();
     } else if(args['help']) {
         consoleHelp(defenitions);
+    } else if (args['list']) {
+        consoleInfo(`List of all created scripts in ${scriptDir}:`);
+        consoleListOfAllScripts(scriptDir);
     } else {
         consoleError('No valid arguments provided!');
     }
-
-    process.exit(0);
-})();
-
-function consoleHelp(defenitions) {
-    console.log('Help |'.magenta, 'Table of all Scripterra flags:'.blue);
-    consoleTable(
-        (() => {
-            const commands = [];
-
-            for (const command of defenitions) {
-                commands.push({
-                    flag: command.name,
-                    alias: command.alias,
-                    description: command.description
-                });
-            }
-
-            return commands;
-        })()
-    );
 }
+
 
 function createScript(name) {
     createFile(config.SCRIPTS_PATH ?? execDir, `${__dirname}/../cli/template.txt`, name, '.js');
@@ -161,6 +166,36 @@ function consoleTable(obj) {
     console.table(obj);
 }
 
+function consoleHelp(defenitions) {
+    console.log('Help | '.magenta, 'Table of all Scripterra flags:'.blue);
+    consoleTable(
+        (() => {
+            const commands = [];
+
+            for (const command of defenitions) {
+                commands.push({
+                    flag: command.name,
+                    alias: command.alias,
+                    description: command.description
+                });
+            }
+
+            return commands;
+        })()
+    );
+    console.log('Documentation: https://github.com/TheGrotesk/scripterra/tree/master/public/docs'.yellow);
+}
+
+function consoleListOfAllScripts(path) {
+    const scripts = fs.readdirSync(path);
+    consoleTable((() => scripts.map(script => {
+        return {
+            name: script,
+            status: ''
+        }
+    }))());
+}
+
 function loadConfig() {
     const result = dotenv.config({
         path: './.scripterra'
@@ -174,4 +209,25 @@ function loadConfig() {
 
         config = result.parsed;
     }
+}
+
+function buildScript(path, name) {
+    consoleInfo(`Starting building the script...${path}`);
+
+    const buildResult = babel.transformFileSync(path + '.js', {
+        "presets": [
+            ["@babel/preset-env", {
+                "useBuiltIns": false
+            }]
+        ],
+        "plugins": ['@babel/plugin-transform-runtime']
+    });
+
+    if (!buildResult) {
+        consoleError(buildResult);
+    }
+
+    consoleInfo('Script successfully build!');
+
+    return buildResult;
 }
