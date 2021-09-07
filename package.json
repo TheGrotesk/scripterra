@@ -1,6 +1,6 @@
 {
   "name": "@thegrotesk/scripterra",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "description": "Script engine for your server",
   "main": "index.js",
   "scripts": {
