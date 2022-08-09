@@ -7,6 +7,6 @@ export class ${name} extends Script {
     }
 
     async main() {
-        console.log('Hello world!');
+        this.console.consoleInfo('Hello world!');
     }
 }
