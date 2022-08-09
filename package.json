@@ -2,7 +2,7 @@
   "name": "@thegrotesk/scripterra",
   "version": "0.1.1",
   "description": "Script engine for your server",
-  "main": "index.js",
+  "main": "bin/scripterra-cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,6 +22,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@babel/core": "^7.18.10",
+    "@babel/runtime": "^7.18.9",
     "colors": "^1.4.0",
     "command-line-args": "^5.1.3",
     "dotenv": "^10.0.0"
