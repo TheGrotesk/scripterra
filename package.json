@@ -21,6 +21,7 @@
   "author": "Alexander Poberezhnyi",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@babel/core": "^7.18.10",
     "colors": "^1.4.0",
     "command-line-args": "^5.1.3",
     "dotenv": "^10.0.0"
@@ -28,7 +29,6 @@
   "directories": {
     "lib": "lib"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TheGrotesk/scripterra.git"
