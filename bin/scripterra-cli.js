@@ -31,13 +31,13 @@ const scheduler = new Scheduler(consoleObj, filesystem, database);
 const processor = new Processor(consoleObj, configurator, filesystem, compiler, database, scheduler, args);
 
 process.addListener('uncaughtException', (err) => {
-    console.log(err);
     consoleObj.consoleError(err);
+    process.exit(0);
 });
 
 process.addListener('unhandledRejection', (err) => {
-    console.log(err);
     consoleObj.consoleError(err);
+    process.exit(0);
 });
 
 (async () => {
