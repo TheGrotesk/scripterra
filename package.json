@@ -25,12 +25,15 @@
     "@babel/core": "^7.18.10",
     "@babel/runtime": "^7.18.9",
     "babel-preset-env": "^1.7.0",
+    "bull": "^4.8.5",
     "colors": "^1.4.0",
     "command-line-args": "^5.1.3",
     "dotenv": "^10.0.0",
+    "forever": "^4.0.3",
     "node-cron": "^3.0.1",
     "sqlite": "^4.1.2",
-    "sqlite3": "^5.0.11"
+    "sqlite3": "^5.0.11",
+    "uuid": "^8.3.2"
   },
   "directories": {
     "lib": "lib"
@@ -44,6 +47,7 @@
   },
   "homepage": "https://github.com/TheGrotesk/scripterra#readme",
   "devDependencies": {
-    "@babel/preset-env": "^7.18.10"
+    "@babel/preset-env": "^7.18.10",
+    "@types/bull": "^3.15.9"
   }
 }

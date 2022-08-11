@@ -6,9 +6,11 @@ const Compiler = require('../lib/compiler');
 const Configurator = require('../lib/configurator');
 const Console = require('../lib/console');
 const Database = require('../lib/database');
+const Schedules = require('../lib/database/entities/schedules');
 const Scripts = require('../lib/database/entities/scripts');
 const FileSystem = require('../lib/filesystem');
 const Processor = require('../lib/processor');
+const Scheduler = require('../lib/scheduler');
 const Script = require('../lib/script');
 const ScriptConsole = require('../lib/script-console');
 
@@ -21,10 +23,12 @@ const configurator = new Configurator(consoleObj);
 const filesystem = new FileSystem(consoleObj);
 const compiler = new Compiler(consoleObj, configurator, filesystem);
 const database = new Database([
-    Scripts
+    Scripts,
+    Schedules
 ]);
+const scheduler = new Scheduler(consoleObj, filesystem, database);
 
-const processor = new Processor(consoleObj, configurator, filesystem, compiler, database, args);
+const processor = new Processor(consoleObj, configurator, filesystem, compiler, database, scheduler, args);
 
 process.addListener('uncaughtException', (err) => {
     console.log(err);
@@ -42,6 +46,7 @@ process.addListener('unhandledRejection', (err) => {
     configurator.loadConfig();
 
     await database.initDb();
+    await scheduler.initializeQueue();
 
     await processor.processCommand();
 
