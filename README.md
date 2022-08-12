@@ -176,7 +176,7 @@ Info |  Compile script...
 
 **Step 5. Schedule script**
 
-You can schedule your scripts. Be shure that your redies server is working!
+You can schedule your scripts. Be shure that your redis server is working!
 
 ```sh
 scripterra --schedule Test --env .test --expression '* * * * *'
