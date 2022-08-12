@@ -24,7 +24,7 @@ const compiler = new Compiler(consoleObj, configurator, filesystem);
 const database = new Database([
     Scripts,
     Schedules
-]);
+], filesystem);
 const scheduler = new Scheduler(consoleObj, filesystem, database);
 
 const processor = new Processor(consoleObj, configurator, filesystem, compiler, database, scheduler, args, isScripterraWorker);

@@ -6,13 +6,16 @@ const Compiler = require('../lib/compiler');
 const Configurator = require('../lib/configurator');
 const Console = require('../lib/console');
 const Database = require('../lib/database');
-const Schedules = require('../lib/database/entities/schedules');
-const Scripts = require('../lib/database/entities/scripts');
+// const Schedules = require('../lib/database/entities/schedules');
+// const Scripts = require('../lib/database/entities/scripts');
 const FileSystem = require('../lib/filesystem');
 const Processor = require('../lib/processor');
+const RedisDatabase = require('../lib/redis-database');
 const Scheduler = require('../lib/scheduler');
 const Script = require('../lib/script');
 const ScriptConsole = require('../lib/script-console');
+const Schedules = require('./../lib/database/schemas/schedules');
+const Scripts = require('./../lib/database/schemas/scripts');
 
 const { defenitions } = require('./../lib/defenitions');
 
@@ -22,10 +25,14 @@ const consoleObj = new Console();
 const configurator = new Configurator(consoleObj);
 const filesystem = new FileSystem(consoleObj);
 const compiler = new Compiler(consoleObj, configurator, filesystem);
-const database = new Database([
-    Scripts,
-    Schedules
-]);
+// const database = new Database([
+//     Scripts,
+//     Schedules
+// ], filesystem);
+const database = new RedisDatabase({
+    Schedules,
+    Scripts
+}, configurator);
 const scheduler = new Scheduler(consoleObj, filesystem, database);
 
 const processor = new Processor(consoleObj, configurator, filesystem, compiler, database, scheduler, args);

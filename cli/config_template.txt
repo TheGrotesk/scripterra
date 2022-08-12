@@ -1,3 +1,4 @@
 SCRIPTS_PATH = ./scripts
-TRAITS_PATH = ./traits
 ENV_PATH = ./scripts-env
+REDIS=redis://localhost:6379
+LOG_PATH=./logs/
