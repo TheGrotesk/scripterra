@@ -52,7 +52,7 @@ which removes the need to worry about dubbing, configs, deploy and cron.</p>
 ## 🌟 Features
 
 - Pretty CLI
-- Multiple env file for one scripts
+- Multiple env files for one scripts
 - Schedules
 - Custom detached worker
 - Logs
