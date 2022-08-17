@@ -26,19 +26,48 @@
 
 > Powerful script engine for Node.js
 
-
 ### 🏠 [Homepage](https://github.com/TheGrotesk/scripterra#readme)
 
-## Requirments
+## 🧑‍🏫 Motivation
+
+<p>Most developers sooner or later come across writing scripts that are not directly integrated into the application code.</p> 
+
+<p>Thus, tones of javascript files are created that are not related to each other. 
+They perform a certain action, for example, according to the schedule, they get information from a third-party api and write it to the database or something like that.</p> 
+
+<p>It's not a bad approach when there are no more than 5 such files. 
+But let's imagine that there are 30 such files? Each separate file is a separate javascript code that does something on a schedule or on a call.</p>
+
+* What about the dependencies? 
+
+* What about the dubbing of the code? 
+
+* What about the logs? 
+
+* What if you have many projects that require one script but different configs for it? 
+
+<p>To solve these problems, the Scripterra scripting engine was developed, 
+which removes the need to worry about dubbing, configs, deploy and cron.</p>
+
+## 🌟 Features
+
+- Pretty CLI
+- Multiple env file for one scripts
+- Schedules
+- Custom detached worker
+- Logs
+- Easy to use
+
+## ⚓ Requirments
  - redis-stack-server [Quick start](https://redis.io/docs/stack/search/quick_start/)
  - node v16.16.0
-## Install
+## ⚙️ Install
 
 ```sh
 npm i -g @thegrotesk/scripterra
 ```
 
-## Quick Guide
+## 📌 Quick Guide
 
 You can list all available flags by typing this command:
 
@@ -258,7 +287,7 @@ scripterra --delete schedule --name Test --env .test
 
 Enjoy!
 
-## Documantation
+## 🧾 Documantation
 
 * [About](/public/docs/About.md)
 
