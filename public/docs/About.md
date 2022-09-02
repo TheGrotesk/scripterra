@@ -29,4 +29,4 @@ But let's imagine that there are 30 such files? Each separate file is a separate
 * What if you have many projects that require one script but different configs for it? 
 
 <p>To solve these problems, the Scripterra scripting engine was developed, 
-which removes the need to worry about libraries, dubbing, configs, deploy and cron.</p>
+which removes the need to worry about dubbing, configs, deploy and cron.</p>
