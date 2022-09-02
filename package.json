@@ -23,7 +23,6 @@
   "dependencies": {
     "@babel/cli": "^7.18.10",
     "@babel/core": "^7.18.10",
-    "@babel/preset-env": "^7.18.10",
     "@babel/runtime": "^7.18.9",
     "bull": "^4.8.5",
     "colors": "^1.4.0",
@@ -47,6 +46,7 @@
   },
   "homepage": "https://github.com/TheGrotesk/scripterra#readme",
   "devDependencies": {
+    "@babel/preset-env": "^7.18.10",
     "@types/bull": "^3.15.9"
   }
 }
